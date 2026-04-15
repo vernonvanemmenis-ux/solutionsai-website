@@ -308,3 +308,29 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     },
   });
 })();
+
+// ── THEME TOGGLE ──
+(function initTheme() {
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
+  const root = document.documentElement;
+
+  const saved = localStorage.getItem('sai-theme');
+  if (saved === 'light') {
+    root.setAttribute('data-theme', 'light');
+    toggle.textContent = '🌙';
+  }
+
+  toggle.addEventListener('click', () => {
+    const isLight = root.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('sai-theme', 'dark');
+      toggle.textContent = '☀️';
+    } else {
+      root.setAttribute('data-theme', 'light');
+      localStorage.setItem('sai-theme', 'light');
+      toggle.textContent = '🌙';
+    }
+  });
+})();
