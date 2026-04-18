@@ -104,7 +104,7 @@ button { cursor: pointer; font-family: var(--font-body); }
   padding: 12px 48px;
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
-.nav-logo-img { height: 112px; }
+.nav-logo-img { height: 88px; }
 .nav-links { display: flex; gap: 28px; align-items: center; }
 .nav-link { font-size: 0.78rem; color: rgba(255,255,255,0.6); transition: color 0.2s; }
 .nav-link:hover { color: #fff; }
@@ -150,12 +150,13 @@ button { cursor: pointer; font-family: var(--font-body); }
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 5vw, 4.8rem);
   font-weight: 900;
-  line-height: 1.0;
+  line-height: 1.05;
   color: #fff;
   margin-bottom: 22px;
-  max-width: 640px;
+  max-width: 720px;
 }
-.word { display: inline-block; margin-right: 0.25em; }
+.hero-line { display: block; }
+.word { display: inline-block; margin-right: 0.15em; }
 .word--accent { color: var(--blue); }
 .hero-sub {
   font-size: 0.95rem;
@@ -245,14 +246,31 @@ button { cursor: pointer; font-family: var(--font-body); }
   padding: 22px;
   border: 1px solid #e5e7eb;
   cursor: pointer;
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  position: relative;
+  isolation: isolate;
+  z-index: 0;
 }
 .svc-card:hover, .svc-card.is-open {
-  box-shadow: 0 6px 24px rgba(37,99,176,0.12);
   border-color: var(--blue);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 2px rgba(37,99,176,0.6),
+    0 0 16px 2px rgba(37,99,176,0.55),
+    0 0 40px 8px rgba(37,99,176,0.35),
+    0 0 80px 16px rgba(37,99,176,0.18);
 }
-.svc-icon { font-size: 1.4rem; margin-bottom: 12px; }
+.svc-icon { margin-bottom: 12px; height: 56px; display: flex; align-items: center; }
+.svc-icon img {
+  height: 56px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(37,99,176,0.18));
+  transition: transform 0.25s ease;
+}
+.svc-card:hover .svc-icon img, .svc-card.is-open .svc-icon img {
+  transform: translateY(-2px) rotate(-3deg) scale(1.04);
+}
 .svc-title {
   font-family: var(--font-display);
   font-size: 0.88rem;
@@ -372,7 +390,8 @@ button { cursor: pointer; font-family: var(--font-body); }
 @media (max-width: 768px) {
   /* Nav */
   .site-nav { padding: 10px 20px; }
-  .nav-logo-img { height: 60px; }
+  .nav-logo-img { height: 52px; }
+  .site-nav.scrolled .nav-logo-img { height: 52px; }
   .nav-links .nav-link { display: none; }
 
   /* Hero */
@@ -421,7 +440,7 @@ button { cursor: pointer; font-family: var(--font-body); }
   backdrop-filter: blur(12px);
   box-shadow: 0 2px 24px rgba(0,0,0,0.3);
 }
-.site-nav.scrolled .nav-logo-img { height: 72px; transition: height 0.3s ease; }
+.site-nav.scrolled .nav-logo-img { height: 88px; }
 
 /* ── LIGHT MODE ── */
 [data-theme="light"] body { background: var(--light); color: var(--text-dark); }
@@ -484,4 +503,3 @@ button { cursor: pointer; font-family: var(--font-body); }
   border-color: rgba(0,0,0,0.12);
   color: #374151;
 }
-.nav-logo-img { transition: height 0.3s ease; }

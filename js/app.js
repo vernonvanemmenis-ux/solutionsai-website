@@ -4,16 +4,10 @@
   const ctx = canvas.getContext('2d');
   let width, height, particles = [], mouse = { x: -1000, y: -1000 };
   const PARTICLE_COUNT = 18;
-  const BASE_COLOR = '#2563B0';
 
-  // Irregular polygon shapes echoing the logo fragments
-  const SHAPES = [
-    [[0,0.4],[0.6,0],[1,0.3],[0.8,1],[0.1,0.9]],
-    [[0.2,0],[1,0.1],[0.9,0.8],[0,0.7]],
-    [[0.5,0],[1,0.4],[0.7,1],[0,0.8],[0.1,0.2]],
-    [[0,0.2],[0.8,0],[1,0.6],[0.3,1]],
-    [[0.3,0],[1,0.2],[0.8,1],[0,0.6]],
-  ];
+  // Logo-icon sprite (the 7-shard star) — drawn at each particle.
+  const sprite = new Image();
+  sprite.src = 'assets/logo-icon.png';
 
   function resize() {
     width = canvas.width = window.innerWidth;
@@ -21,34 +15,25 @@
   }
 
   function randomParticle() {
-    const size = 30 + Math.random() * 60;
     return {
       x: Math.random() * width,
       y: Math.random() * height,
-      size,
-      shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+      size: 60 + Math.random() * 90,
       rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.008,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      opacity: 0.06 + Math.random() * 0.12,
+      rotSpeed: (Math.random() - 0.5) * 0.006,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      opacity: 0.08 + Math.random() * 0.14,
     };
   }
 
-  function drawPolygon(p) {
+  function drawSprite(p) {
+    if (!sprite.complete || !sprite.naturalWidth) return;
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.rotate(p.rotation);
-    ctx.beginPath();
-    p.shape.forEach(([px, py], i) => {
-      const x = (px - 0.5) * p.size;
-      const y = (py - 0.5) * p.size;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    });
-    ctx.closePath();
-    ctx.fillStyle = BASE_COLOR;
     ctx.globalAlpha = p.opacity;
-    ctx.fill();
+    ctx.drawImage(sprite, -p.size / 2, -p.size / 2, p.size, p.size);
     ctx.restore();
   }
 
@@ -71,7 +56,7 @@
       if (p.x > width + p.size) p.x = -p.size;
       if (p.y < -p.size) p.y = height + p.size;
       if (p.y > height + p.size) p.y = -p.size;
-      drawPolygon(p);
+      drawSprite(p);
     });
     ctx.globalAlpha = 1;
     requestAnimationFrame(update);
@@ -314,11 +299,19 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   const toggle = document.getElementById('theme-toggle');
   if (!toggle) return;
   const root = document.documentElement;
+  const navLogo = document.querySelector('.nav-logo-img');
+  const LOGO_DARK = 'assets/logo-dark-bg.png';
+  const LOGO_LIGHT = 'assets/logo-primary.png';
+
+  const applyLogo = (isLight) => {
+    if (navLogo) navLogo.src = isLight ? LOGO_LIGHT : LOGO_DARK;
+  };
 
   const saved = localStorage.getItem('sai-theme');
   if (saved === 'light') {
     root.setAttribute('data-theme', 'light');
     toggle.textContent = '🌙';
+    applyLogo(true);
   }
 
   toggle.addEventListener('click', () => {
@@ -327,10 +320,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       root.removeAttribute('data-theme');
       localStorage.setItem('sai-theme', 'dark');
       toggle.textContent = '☀️';
+      applyLogo(false);
     } else {
       root.setAttribute('data-theme', 'light');
       localStorage.setItem('sai-theme', 'light');
       toggle.textContent = '🌙';
+      applyLogo(true);
     }
   });
 })();
