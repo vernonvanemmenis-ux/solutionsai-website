@@ -1,0 +1,12 @@
+.worktrees/
+.superpowers/
+node_modules/
+
+# Local dev launch config (Claude Code preview server)
+.claude/
+
+# Source video clips (large; reproducible from kie.ai task IDs)
+site-bg/clips/
+
+# Reference frames extracted from user-provided screen recordings
+site-bg/ref/

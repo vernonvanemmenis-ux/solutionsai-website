@@ -1,3 +1,15 @@
+// ── TECH MARQUEE: clone children for seamless scroll loop ──
+(function initTechMarquee() {
+  const track = document.querySelector('.tech-track');
+  if (!track) return;
+  const originals = Array.from(track.children);
+  originals.forEach(el => {
+    const clone = el.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+  });
+})();
+
 // ── CANVAS PARTICLE SYSTEM ──
 (function initParticles() {
   const canvas = document.getElementById('hero-canvas');
@@ -81,11 +93,116 @@ gsap.ticker.add((time) => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 gsap.registerPlugin(ScrollTrigger);
 
-// Smooth scroll for anchor links
+// ── SCROLL-BG FRAME ENGINE ──
+(function initScrollBg() {
+  const FRAME_COUNT = 235;
+  const FRAME_VERSION = 'v3';
+  const FRAME_PATH = (i) => `assets/bg-frames/frame-${String(i).padStart(4, '0')}.jpg?${FRAME_VERSION}`;
+  const wrap = document.querySelector('.scroll-bg');
+  const canvas = document.getElementById('scroll-bg-canvas');
+  if (!wrap || !canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  const frames = new Array(FRAME_COUNT);
+  let currentIdx = -1;
+  let pending = -1;
+  let rafId = 0;
+
+  function sizeCanvas() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+
+  function drawCover(img) {
+    if (!img || !img.complete || !img.naturalWidth) return;
+    const cw = canvas.width, ch = canvas.height;
+    const ir = img.naturalWidth / img.naturalHeight;
+    const cr = cw / ch;
+    let dw, dh, dx, dy;
+    if (ir > cr) {
+      dh = ch; dw = ch * ir; dx = (cw - dw) / 2; dy = 0;
+    } else {
+      dw = cw; dh = cw / ir; dx = 0; dy = (ch - dh) / 2;
+    }
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
+  function paint(idx) {
+    if (idx === currentIdx) return;
+    const img = frames[idx];
+    if (img && img.complete && img.naturalWidth) {
+      drawCover(img);
+      currentIdx = idx;
+    } else {
+      // fall back to nearest loaded neighbour so we never leave a blank frame
+      for (let r = 1; r < 12; r++) {
+        const a = frames[idx - r], b = frames[idx + r];
+        if (a && a.complete && a.naturalWidth) { drawCover(a); currentIdx = idx - r; return; }
+        if (b && b.complete && b.naturalWidth) { drawCover(b); currentIdx = idx + r; return; }
+      }
+    }
+  }
+
+  function scheduleFrame() {
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const p = docH > 0 ? Math.min(1, Math.max(0, window.scrollY / docH)) : 0;
+    pending = Math.min(FRAME_COUNT - 1, Math.round(p * (FRAME_COUNT - 1)));
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      paint(pending);
+    });
+  }
+
+  function preloadAll() {
+    let loaded = 0;
+    let firstReady = false;
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => {
+        loaded++;
+        if (!firstReady && i === 0) {
+          firstReady = true;
+          paint(0);
+          wrap.classList.add('is-ready');
+        }
+        if (i === currentIdx + 1 || i === pending) scheduleFrame();
+      };
+      img.src = FRAME_PATH(i + 1);
+      frames[i] = img;
+    }
+  }
+
+  function onResize() {
+    sizeCanvas();
+    currentIdx = -1;
+    scheduleFrame();
+  }
+
+  sizeCanvas();
+  preloadAll();
+  scheduleFrame();
+  window.addEventListener('resize', onResize, { passive: true });
+  window.addEventListener('scroll', scheduleFrame, { passive: true });
+  if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', scheduleFrame);
+})();
+
+// Smooth scroll for anchor links (including bare "#" → top of page)
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    const target = document.querySelector(link.getAttribute('href'));
+    const href = link.getAttribute('href');
+    if (!href || href === '#') {
+      lenis.scrollTo(0);
+      return;
+    }
+    const target = document.querySelector(href);
     if (target) lenis.scrollTo(target, { offset: -80 });
   });
 });
@@ -108,9 +225,9 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 (function initScrollAnimations() {
   const triggerOpts = { start: 'top 75%', toggleActions: 'play none none none' };
 
-  // 02 Trust — stagger-up
-  gsap.from('.tech-pill', {
-    y: 30, opacity: 0, stagger: 0.06, duration: 0.6, ease: 'power3.out',
+  // 02 Trust — fade marquee in (stagger on individual pills would fight the CSS marquee)
+  gsap.from('.tech-marquee', {
+    y: 30, opacity: 0, duration: 0.7, ease: 'power3.out',
     scrollTrigger: { trigger: '.trust', ...triggerOpts },
   });
   gsap.from('.stat-item', {

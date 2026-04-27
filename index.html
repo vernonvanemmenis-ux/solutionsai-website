@@ -8,9 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2026-04-27-7">
 </head>
 <body>
+
+  <!-- ── SCROLL-BG REEL ── -->
+  <div class="scroll-bg" aria-hidden="true">
+    <canvas class="scroll-bg__canvas" id="scroll-bg-canvas"></canvas>
+    <div class="scroll-bg__tint"></div>
+    <div class="scroll-bg__dimmer"></div>
+  </div>
 
   <!-- ── NAVIGATION ── -->
   <header class="site-nav" id="site-nav">
@@ -61,16 +68,18 @@
   <section class="trust" id="trust">
     <div class="trust-inner">
       <p class="section-label section-label--dim">Powered by industry-leading technology</p>
-      <div class="tech-logos">
-        <span class="tech-pill">VAPI</span>
-        <span class="tech-pill">Make.com</span>
-        <span class="tech-pill">Anthropic Claude</span>
-        <span class="tech-pill">Airtable</span>
-        <span class="tech-pill">Twilio</span>
-        <span class="tech-pill">ElevenLabs</span>
-        <span class="tech-pill">Calendly</span>
-        <span class="tech-pill">Zapier</span>
-        <span class="tech-pill">OpenAI</span>
+      <div class="tech-marquee" aria-label="Powered by industry-leading technology">
+        <div class="tech-track">
+          <span class="tech-pill">VAPI</span>
+          <span class="tech-pill">Make.com</span>
+          <span class="tech-pill">Anthropic Claude</span>
+          <span class="tech-pill">Airtable</span>
+          <span class="tech-pill">Twilio</span>
+          <span class="tech-pill">ElevenLabs</span>
+          <span class="tech-pill">Calendly</span>
+          <span class="tech-pill">Zapier</span>
+          <span class="tech-pill">OpenAI</span>
+        </div>
       </div>
       <div class="stats-row">
         <div class="stat-item">
@@ -109,7 +118,7 @@
   <div class="divider"></div>
   <section class="services section-pad" id="services">
     <div class="section-inner">
-      <span class="section-label">003 / What We Build</span>
+      <span class="section-label">001 / What We Build</span>
       <h2 class="section-heading" style="font-size:2.4rem; margin-bottom:40px; max-width:520px;">Everything You Need to Automate Your Business</h2>
       <div class="services-grid">
 
@@ -229,7 +238,7 @@
   <div class="divider"></div>
   <section class="how section-pad" id="how-it-works">
     <div class="section-inner">
-      <span class="section-label">004 / The Process</span>
+      <span class="section-label section-label--blue">002 / The Process</span>
       <h2 class="section-heading" style="font-size:2.4rem; margin-bottom:44px; max-width:520px;">Simple Steps to Your First Automation</h2>
       <div class="steps-row">
         <svg class="steps-connector" aria-hidden="true"><line class="connector-line-1" x1="0" y1="0" x2="0" y2="0"/><line class="connector-line-2" x1="0" y1="0" x2="0" y2="0"/></svg>
@@ -256,7 +265,7 @@
   <div class="divider"></div>
   <section class="impact section-pad" id="impact">
     <div class="section-inner">
-      <span class="section-label">005 / What We've Found in the Field</span>
+      <span class="section-label">003 / What We've Found in the Field</span>
       <h2 class="section-heading" style="font-size:2.4rem; margin-bottom:40px; max-width:560px;">The Automation Opportunity Is Bigger Than You Think</h2>
 
       <!-- Case studies: shown when case_studies = true -->
@@ -301,7 +310,7 @@
     <div class="section-inner">
       <div class="contact-grid">
         <div class="contact-info">
-          <span class="section-label">006 / Get in Touch</span>
+          <span class="section-label">004 / Get in Touch</span>
           <h2 class="section-heading" style="font-size:1.8rem; margin-bottom:16px; max-width:380px;">Let's Talk About What's Possible for Your Business</h2>
           <p class="contact-body">Not sure where to start? Tell us about your biggest time sink or manual process. We'll show you exactly how to automate it.</p>
           <a href="https://calendly.com/vernonvanemmenis/30min" target="_blank" class="btn btn--calendly">📅 Book a Free 30-min Consultation</a>
@@ -361,7 +370,7 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2026-04-27-3"></script>
 
 </body>
 </html>
