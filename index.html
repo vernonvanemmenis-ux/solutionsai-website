@@ -138,6 +138,10 @@
   <!-- ── 01 HERO ── -->
   <section class="hero" id="hero">
     <canvas id="hero-canvas"></canvas>
+    <div id="bold-globe" aria-hidden="true">
+      <div class="bold-globe-glow"></div>
+      <canvas></canvas>
+    </div>
     <div class="hero-content">
       <span class="hero-label">AI Consulting & Implementation · Built for Mid-Market Businesses</span>
       <h1 class="hero-heading">
@@ -153,6 +157,40 @@
         </span>
       </h1>
       <p class="hero-sub">Strategy, systems and the team to ship AI inside your business — built around your operations, owned by you, measured in outcomes.</p>
+      <div id="bold-search">
+        <div class="bold-search-capsule">
+          <svg class="bold-search-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="#9CA3AF" stroke-width="2"/>
+            <path d="M21 21l-4.3-4.3" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input class="bold-search-input" placeholder="Ask me anything about automating your business…" aria-label="Ask SolutionsAI" />
+          <button class="bold-search-submit" aria-label="Ask SolutionsAI">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h13M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="bold-search-chips">
+          <button type="button">Automate my invoice processing</button>
+          <button type="button">Build a voice agent for bookings</button>
+          <button type="button">Handle customer support with AI</button>
+          <button type="button">Where do I even start?</button>
+        </div>
+        <div class="bold-search-response">
+          <div class="bold-search-response-brand">
+            <span style="width:18px;height:18px;border-radius:4px;background:linear-gradient(135deg,#3D8BFF,#2563B0);display:inline-block;" aria-hidden="true"></span>
+            <span>SolutionsAI</span>
+          </div>
+          <div class="bold-search-thinking" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="bold-search-answer">
+            <p class="bold-search-answer-text"></p>
+            <div class="bold-search-answer-cta">
+              <a href="https://calendly.com/vernonvanemmenis/30min" target="_blank">Book a strategy call →</a>
+              <button type="button" class="bold-search-reset">Ask something else</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="hero-btns">
         <a href="https://calendly.com/vernonvanemmenis/30min" target="_blank" class="btn btn--primary">📅 Book a Strategy Call</a>
         <a href="#services" class="btn btn--ghost">Explore Services ↓</a>
@@ -221,127 +259,42 @@
     <div class="section-inner">
       <span class="section-label">001 / What We Build</span>
       <h2 class="section-heading" style="font-size:2.4rem; margin-bottom:40px; max-width:560px;">Where AI Should Be Working Inside Your Business</h2>
-      <div class="services-grid">
+      <div class="services-grid services-grid--rows">
 
-        <div class="svc-card" data-category="ai-agents">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Robot/3D/robot_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">AI Agents & Automation</h3>
-          <p class="svc-desc">Custom agents, multi-agent systems, workflow automation</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Custom AI Agents</li><li>Workflow Automation</li><li>Multi-Agent Systems</li>
-              <li>Department-Specific Agents (Support, Finance, HR, Ops)</li><li>API-Integrated Automation</li>
-            </ul>
-          </div>
-        </div>
+        <a href="#contact" class="svc-row" data-category="ai-agents">
+          <span class="svc-row-num">01</span>
+          <span class="svc-row-title">AI Agents &amp; Automation</span>
+          <span class="svc-row-tags">● Agents&nbsp;&nbsp;△ Workflows&nbsp;&nbsp;⁂ Multi-agent</span>
+          <span class="svc-row-arrow">↗</span>
+        </a>
 
-        <div class="svc-card" data-category="ai-training">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Graduation%20cap/3D/graduation_cap_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">AI Training & Enablement</h3>
-          <p class="svc-desc">Workshops, bootcamps and upskilling so your team can build with AI themselves</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Team AI Fluency Workshops</li><li>Executive AI Briefings</li><li>Prompt Engineering Bootcamps</li>
-              <li>Tool Training (ChatGPT, Claude, Copilot)</li><li>Internal AI Champion Programs</li><li>Custom Industry Curriculum</li>
-            </ul>
-          </div>
-        </div>
+        <a href="#contact" class="svc-row" data-category="voice-ai">
+          <span class="svc-row-num">02</span>
+          <span class="svc-row-title">Voice AI</span>
+          <span class="svc-row-tags">● Inbound&nbsp;&nbsp;△ Outbound&nbsp;&nbsp;⁂ Booking</span>
+          <span class="svc-row-arrow">↗</span>
+        </a>
 
-        <div class="svc-card" data-category="voice-ai">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Studio%20microphone/3D/studio_microphone_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Voice AI</h3>
-          <p class="svc-desc">Inbound & outbound call agents, appointment booking, support</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Voice AI Phone Agents</li><li>Inbound Call Agents</li><li>Outbound Call Agents</li>
-              <li>Appointment-Booking Voice Agents</li><li>Voice-Based Customer Support</li>
-            </ul>
-          </div>
-        </div>
+        <a href="#contact" class="svc-row" data-category="customer-support">
+          <span class="svc-row-num">03</span>
+          <span class="svc-row-title">Customer Support</span>
+          <span class="svc-row-tags">● Chat&nbsp;&nbsp;△ Email&nbsp;&nbsp;⁂ Escalation</span>
+          <span class="svc-row-arrow">↗</span>
+        </a>
 
-        <div class="svc-card" data-category="auditing">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">AI Auditing & Compliance</h3>
-          <p class="svc-desc">System audits, bias detection, data governance, risk assessments</p>
-          <div class="svc-sub">
-            <ul>
-              <li>AI System Audits</li><li>Bias Detection</li><li>Model Performance Evaluation</li>
-              <li>Data Governance Audits</li><li>Compliance Reporting</li><li>AI Risk Assessments</li>
-            </ul>
-          </div>
-        </div>
+        <a href="#contact" class="svc-row" data-category="data-analytics">
+          <span class="svc-row-num">04</span>
+          <span class="svc-row-title">Data &amp; Analytics</span>
+          <span class="svc-row-tags">● Dashboards&nbsp;&nbsp;△ KPIs&nbsp;&nbsp;⁂ Predictive</span>
+          <span class="svc-row-arrow">↗</span>
+        </a>
 
-        <div class="svc-card" data-category="customer-support">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Speech%20balloon/3D/speech_balloon_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Customer Support Automation</h3>
-          <p class="svc-desc">Chat agents, returns automation, order tracking, escalation handling</p>
-          <div class="svc-sub">
-            <ul>
-              <li>AI Chat Support Agents</li><li>Returns & Refunds Automation</li><li>Order Tracking Agents</li>
-              <li>Escalation Handling Agents</li><li>Product Query Agents</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card" data-category="back-office">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Page%20facing%20up/3D/page_facing_up_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Back-Office Automation</h3>
-          <p class="svc-desc">Document processing, invoice extraction, OCR, contract validation</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Document Processing Agents</li><li>Invoice Extraction</li><li>Contract Validation</li>
-              <li>OCR Automation</li><li>Document Routing</li><li>Anomaly Detection</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card" data-category="scheduling">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Spiral%20calendar/3D/spiral_calendar_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Scheduling & CRM</h3>
-          <p class="svc-desc">Booking agents, reminders, rescheduling, CRM update automation</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Booking Agents</li><li>Rescheduling Agents</li><li>Reminder Agents</li><li>CRM Update Agents</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card" data-category="business-ops">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Gear/3D/gear_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Business Ops Automation</h3>
-          <p class="svc-desc">Lead qualification, email automation, inventory monitoring, HR onboarding</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Lead Qualification Agents</li><li>Email Automation</li><li>Report Generation Agents</li>
-              <li>Inventory Monitoring Agents</li><li>Social Media Automation</li>
-              <li>HR Onboarding Automation</li><li>QA Testing Automation</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card" data-category="data-analytics">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Bar%20chart/3D/bar_chart_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">Data & Analytics Automation</h3>
-          <p class="svc-desc">Automated dashboards, KPI monitoring, ETL automation, predictive analytics</p>
-          <div class="svc-sub">
-            <ul>
-              <li>Automated Dashboards</li><li>KPI Monitoring</li><li>Data Cleaning</li>
-              <li>ETL Automation</li><li>Predictive Analytics</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card" data-category="ai-strategy">
-          <div class="svc-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji/assets/Compass/3D/compass_3d.png" alt="" loading="lazy"></div>
-          <h3 class="svc-title">AI Strategy & Integration</h3>
-          <p class="svc-desc">Readiness assessments, roadmap planning, model deployment, architecture</p>
-          <div class="svc-sub">
-            <ul>
-              <li>AI Readiness Assessments</li><li>AI Roadmap Planning</li><li>System Integration</li>
-              <li>Custom Model Deployment</li><li>Multi-Agent Architecture Design</li>
-            </ul>
-          </div>
-        </div>
+        <a href="#contact" class="svc-row" data-category="custom-apps">
+          <span class="svc-row-num">05</span>
+          <span class="svc-row-title">Custom-Built Applications</span>
+          <span class="svc-row-tags">● Web Apps&nbsp;&nbsp;△ Mobile&nbsp;&nbsp;⁂ Built to spec</span>
+          <span class="svc-row-arrow">↗</span>
+        </a>
 
       </div>
     </div>
@@ -580,6 +533,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
   <script src="js/app.js?v=2026-04-27-3"></script>
+  <script src="js/bold.js?v=2026-06-01"></script>
 
 </body>
 </html>
