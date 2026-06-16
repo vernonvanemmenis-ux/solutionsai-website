@@ -24,8 +24,21 @@
   --dark-deep:      #06080E;
 }
 
-html, body { background: var(--bold-bg) !important; color: var(--bold-text); }
+html, body { background: var(--bold-bg) !important; color: var(--bold-text); overflow-x: hidden; }
 *::selection { background: var(--bold-accent); color: var(--bold-bg); }
+
+/* let pointer events pass THROUGH the hero text so the globe canvas behind catches
+   them across its full visible area (was previously dead on the left half). interactive
+   children opt back in below. */
+.hero-content { pointer-events: none; }
+.hero-content a,
+.hero-content button,
+.hero-content input,
+.hero-content textarea,
+.hero-content select,
+.hero-content #bold-search,
+.hero-content .hero-btns,
+.hero-content .hero-btns a { pointer-events: auto; }
 
 /* hide the existing scroll-background canvas — it's a glow effect that fights the flat dark palette */
 .scroll-bg, .scroll-bg__canvas, .scroll-bg__tint, .scroll-bg__dimmer { display: none !important; }
@@ -244,19 +257,49 @@ details[open] .faq-q::after { content: "−"; }
 /* ───── DIVIDERS ───── */
 .divider { border-color: var(--bold-border) !important; background: transparent !important; height: 1px; }
 
-/* ───── LIGHT-THEME OVERRIDE (when toggle flipped — keep it functional but more restrained) ───── */
-body.theme-light, body[data-theme="light"] {
+/* ───── LIGHT-THEME OVERRIDE (toggled via html[data-theme="light"] by app.js) ───── */
+:root[data-theme="light"] {
   --bold-bg: #ffffff;
   --bold-bg-2: #f6f8fc;
+  --bold-bg-3: #eef2f9;
   --bold-text: #0A0E16;
   --bold-text-dim: rgba(10,14,22,0.7);
   --bold-text-mute: rgba(10,14,22,0.5);
   --bold-text-fade: rgba(10,14,22,0.4);
+  --bold-text-fnt: rgba(10,14,22,0.18);
   --bold-border: rgba(10,14,22,0.1);
   --bold-border-2: rgba(10,14,22,0.16);
 }
-body.theme-light *::selection, body[data-theme="light"] *::selection { background: var(--bold-accent); color: #fff; }
-body.theme-light .tech-pill, body[data-theme="light"] .tech-pill { -webkit-text-stroke: 1px rgba(10,14,22,0.4); }
+:root[data-theme="light"] *::selection { background: var(--bold-accent); color: #fff; }
+:root[data-theme="light"] .tech-pill { -webkit-text-stroke: 1px rgba(10,14,22,0.4); }
+:root[data-theme="light"] .site-nav { mix-blend-mode: normal; }
+:root[data-theme="light"] .nav-link { color: var(--bold-text) !important; }
+:root[data-theme="light"] .theme-toggle { color: var(--bold-text) !important; }
+:root[data-theme="light"] .hero-heading { color: var(--bold-text) !important; }
+:root[data-theme="light"] .hero-heading .word { color: var(--bold-text) !important; }
+:root[data-theme="light"] .section-heading { color: var(--bold-text) !important; }
+:root[data-theme="light"] .svc-row-title,
+:root[data-theme="light"] .step-title,
+:root[data-theme="light"] .stat-num,
+:root[data-theme="light"] .stat-item:nth-child(2) .stat-num,
+:root[data-theme="light"] .svc-title,
+:root[data-theme="light"] .impact-saving,
+:root[data-theme="light"] .faq-q,
+:root[data-theme="light"] .cta-heading { color: var(--bold-text) !important; }
+:root[data-theme="light"] .stat-item:nth-child(2) .stat-num { color: var(--bold-accent) !important; }
+:root[data-theme="light"] .svc-row { border-top-color: var(--bold-border-2); }
+:root[data-theme="light"] .svc-row:last-child { border-bottom-color: var(--bold-border-2); }
+:root[data-theme="light"] .step { border-top-color: var(--bold-border-2); }
+:root[data-theme="light"] .faq-item { border-color: var(--bold-border-2) !important; }
+:root[data-theme="light"] .impact-card,
+:root[data-theme="light"] .benchmark { background: rgba(10,14,22,0.03) !important; border-color: var(--bold-border) !important; }
+:root[data-theme="light"] .form-field,
+:root[data-theme="light"] .form-textarea { background: rgba(10,14,22,0.04) !important; border-color: var(--bold-border) !important; color: var(--bold-text) !important; }
+:root[data-theme="light"] .form-field::placeholder,
+:root[data-theme="light"] .form-textarea::placeholder { color: var(--bold-text-mute) !important; }
+:root[data-theme="light"] .bold-search-chips button { color: var(--bold-text); background: rgba(10,14,22,0.04); border-color: var(--bold-border); }
+:root[data-theme="light"] .footer-copy { color: var(--bold-text-fade) !important; }
+:root[data-theme="light"] .nav-link:hover { color: var(--bold-accent) !important; }
 
 /* ───── BOLD GLOBE (hero canvas) ───── */
 @keyframes bold-glb-pulse { 0%,100% { opacity: 0.45; transform: scale(0.96); } 50% { opacity: 0.85; transform: scale(1.05); } }
@@ -291,9 +334,14 @@ body.theme-light .tech-pill, body[data-theme="light"] .tech-pill { -webkit-text-
   #bold-globe { width: 380px; height: 380px; right: -18%; top: 4%; opacity: 0.6; }
 }
 
-/* hero needs to layer content above globe */
-.hero { position: relative; overflow: hidden; }
+/* hero needs to layer content above globe; overflow VISIBLE so the search-pill
+   response can grow past 100vh without being clipped (horizontal scroll is
+   guarded by html/body overflow-x:hidden above). */
+.hero { position: relative; overflow: visible; }
 .hero-content { position: relative; z-index: 2; }
+/* prevent following sections from visually overlapping the hero — make every
+   non-hero section paint on its own opaque background and live in normal flow */
+.trust, .services, .engage, .methodology, .faq, .impact, .contact, .final-cta, .site-footer { position: relative; z-index: 1; }
 
 /* ───── SEARCH PILL ───── */
 @keyframes bold-sp-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -353,7 +401,12 @@ body.theme-light .tech-pill, body[data-theme="light"] .tech-pill { -webkit-text-
   padding: 20px 22px;
   box-shadow: 0 14px 40px rgba(11,17,32,0.30);
   animation: bold-sp-rise 0.35s ease;
+  max-height: min(54vh, 560px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
+.bold-search-response::-webkit-scrollbar { width: 6px; }
+.bold-search-response::-webkit-scrollbar-thumb { background: rgba(11,17,32,0.2); border-radius: 3px; }
 .bold-search-response-brand { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
 .bold-search-response-brand span {
   font-family: 'Montserrat', sans-serif;

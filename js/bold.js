@@ -249,10 +249,88 @@
       if (answerEl) answerEl.style.display = (phase === 'answered') ? 'block' : 'none';
     };
 
+    // Keyword-routed responses. Each topic has match keywords + a tailored
+    // answer. We score against the user's question, pick the best match, and
+    // fall back to a generic answer only if nothing scores.
+    const TOPICS = [
+      {
+        key: 'invoice',
+        kw: ['invoice','invoicing','bill','billing','accounts payable','ap','accounts receivable','ar','receipt','receipts','expense','expenses','accounting','bookkeep','xero','quickbooks','sage'],
+        ans: 'Invoice and AP work is one of the highest-ROI places to put AI to work. Typical build: an agent reads the incoming PDF, extracts vendor / line items / VAT / due date, validates against your PO, and writes the result straight into Xero / Sage / QuickBooks. Errors flag for a human; everything else clears in seconds. We usually ship the first version in 2–3 weeks and have it processing 80–90% of invoices unattended within a month. Book a strategy call and we’ll size yours.'
+      },
+      {
+        key: 'voice',
+        kw: ['voice','call','calls','phone','phones','telephone','booking','book','appointment','appointments','schedule','reservation','reception','receptionist','call center','call centre','ivr','answering','vapi','elevenlabs','outbound','inbound','reminder','reminders'],
+        ans: 'Voice agents are surprisingly good now. We build inbound agents that handle bookings, FAQs, and triage 24/7, and outbound agents for reminders, lead qualification, and re-engagement — all wired into your calendar and CRM so they actually create appointments, not just transcripts. Most clients sound the first version into production in 3–4 weeks. Book a strategy call and we’ll talk through your specific call flows.'
+      },
+      {
+        key: 'support',
+        kw: ['support','customer support','helpdesk','help desk','tickets','ticketing','chat','chatbot','live chat','crm','zendesk','intercom','freshdesk','escalation','refund','refunds','returns','order tracking','customer service'],
+        ans: 'Customer support is where the AI adoption gap shows up first. We build a chat agent that handles the 60–80% of tickets that are repetitive (order status, returns, refunds, FAQ), escalates the rest to humans with full context, and writes summaries back into your CRM (Zendesk, Intercom, Freshdesk, HubSpot). The result: faster response times, higher CSAT, and a support team that only handles the work humans should be handling. Book a strategy call and we’ll map your ticket categories.'
+      },
+      {
+        key: 'data',
+        kw: ['data','analytics','dashboard','dashboards','report','reports','reporting','kpi','kpis','metric','metrics','bi','business intelligence','etl','warehouse','tableau','power bi','looker','predictive','forecast','forecasting'],
+        ans: 'AI on top of your data only works if the data is reachable. We start by mapping where your business data actually lives (your ops tools, your CRM, your spreadsheets), wire the pipes, and then build the AI layer on top — automated dashboards that explain themselves, KPI agents that flag anomalies before a human notices, or predictive models on top of your sales pipeline. Most reporting work that consumes a full FTE today can be reduced to a Slack message. Book a strategy call and we’ll scope it.'
+      },
+      {
+        key: 'training',
+        kw: ['training','train','learn','learning','workshop','workshops','upskill','upskilling','enable','enablement','team','team training','fluency','chatgpt','claude','copilot','prompt','prompts','prompt engineering','champion','champions','curriculum','course','onboarding','bootcamp'],
+        ans: 'Training is often the unlock — 86% of employees have or could easily acquire AI skills, but only ~25% use them daily. We close that gap with AI Workshops, prompt engineering bootcamps, executive briefings, and internal AI Champion programs tailored to your industry. Most teams leave the first workshop with three concrete workflows they can act on the same week. Book a strategy call and we’ll scope a programme.'
+      },
+      {
+        key: 'start',
+        kw: ['start','begin','first','where','what','new to','don\'t know','dont know','no idea','help','how do i','where do i','overwhelmed','confused','lost'],
+        ans: 'Honestly — most clients start with an AI Workshop. One short session to align your team on what AI can and can\'t do, look at your actual workflows, and leave with the two or three opportunities that are worth building first. From there it\'s a Blueprint (2–6 weeks, board-ready business case) and then the first build. No commitment to the bigger steps; the Workshop pays for itself in clarity. Book a strategy call and we\'ll set one up.'
+      },
+      {
+        key: 'agent',
+        kw: ['agent','agents','automation','automate','workflow','workflows','multi-agent','autonomous','ai agent'],
+        ans: 'Agents are our home base. We build custom AI agents that run inside your stack (Slack, your CRM, your ops tools), handle specific workflows end-to-end, and escalate cleanly when they hit something they shouldn\'t decide. Most useful where you have a process that\'s repeatable but currently consumes someone\'s full attention — lead qualification, document processing, ops triage, scheduling, internal Q&A. Most first builds ship in 2–4 weeks. Book a strategy call and we\'ll pick the right one to start.'
+      },
+      {
+        key: 'app',
+        kw: ['app','application','custom app','web app','mobile','platform','software','build me','tool','portal','internal tool'],
+        ans: 'When the off-the-shelf option doesn\'t fit, we build the application around your operations rather than the other way around. Web apps, mobile apps, internal tools, customer portals — all with AI baked in where it earns its keep. Typical project: 6–12 weeks from kickoff to production. Book a strategy call and we\'ll talk through scope.'
+      },
+      {
+        key: 'cost',
+        kw: ['cost','costs','price','pricing','how much','expensive','budget','quote','quotation','rand','dollar','dollars'],
+        ans: 'Depends on scope. An AI Workshop is a few thousand Rand. An AI Blueprint (2–6 weeks, board-ready business case) typically runs R150K–R400K. Custom AI Projects are scoped per engagement. Long-term Technology Partnerships are retainer-based and tied to outcomes. The cheapest mistake we see clients make is building before they\'ve scoped — the Blueprint avoids that. Book a strategy call and we\'ll size yours in 30 minutes.'
+      },
+      {
+        key: 'time',
+        kw: ['how long','time','timeline','duration','weeks','months','when','fast','quick','soon','urgent'],
+        ans: 'A Workshop is delivered in a week. A Blueprint runs 2–6 weeks. A focused Custom AI Project — one workflow, deployed and adopted — typically takes 6–12 weeks from kickoff to production. A Technology Partnership is ongoing with monthly shipping milestones. The biggest predictor of speed is how clean your existing data and processes already are. Book a strategy call and we can give you a real timeline against your scope.'
+      },
+      {
+        key: 'industry',
+        kw: ['industry','industries','sector','vertical','niche','manufacturing','retail','logistics','legal','medical','health','healthcare','finance','financial','insurance','real estate','property','dental','hospitality','restaurant','e-commerce','ecommerce','saas','b2b','b2c'],
+        ans: 'We\'re industry-agnostic — but only because we niche by process, not by sector. The same back-office automation pattern that worked for a logistics firm in Joburg works for a property manager in Cape Town once the underlying workflow is mapped. We\'re happy to share what\'s worked in your sector on a call. Book a strategy call and we\'ll talk through it.'
+      },
+      {
+        key: 'where',
+        kw: ['where','location','based','johannesburg','joburg','jhb','cape town','pretoria','durban','south africa','remote','global','international','africa'],
+        ans: 'Based in Johannesburg, serving teams across South Africa and remote-first worldwide. Workshops, diagnostics, and project delivery happen over video calls and shared tooling — we have clients across SA and internationally. In-person workshops happen anywhere in Gauteng or we fly in when it\'s warranted. Book a strategy call to talk through your setup.'
+      },
+    ];
+
     const craft = (q) => {
       const clean = q.replace(/\s+/g, ' ').trim();
       const short = clean.length > 90 ? clean.slice(0, 88) + '…' : clean;
-      return 'On "' + short + '" — here’s how we’d move: we map the workflow, pinpoint the highest-ROI steps, then ship a custom AI agent wired into your existing tools. Most builds go live in 2–3 weeks. Book a strategy call and we’ll scope it together.';
+      const lq = clean.toLowerCase();
+      let best = null, bestScore = 0;
+      for (const t of TOPICS) {
+        let score = 0;
+        for (const k of t.kw) {
+          if (lq.indexOf(k) !== -1) score += (k.length > 6 ? 2 : 1);
+        }
+        if (score > bestScore) { bestScore = score; best = t; }
+      }
+      if (best) {
+        return 'On "' + short + '" — ' + best.ans;
+      }
+      return 'On "' + short + '" — here’s how we\'d move: we map the workflow, pinpoint the highest-ROI steps, then ship a custom AI agent wired into your existing tools. Most builds go live in 2–3 weeks. Book a strategy call and we’ll scope it together.';
     };
 
     const submit = () => {
