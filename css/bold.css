@@ -69,8 +69,7 @@ html, body { background: var(--bold-bg) !important; color: var(--bold-text); ove
   border-bottom-color: rgba(10,14,22,0.12) !important;
 }
 :root[data-theme="light"] .nav-link { color: var(--bold-text) !important; }
-.nav-logo-img { filter: var(--nav-logo-filter, none); }
-:root[data-theme="light"] { --nav-logo-filter: invert(1) hue-rotate(180deg) brightness(1.1); }
+/* nav + footer logos swapped via bold.js based on theme; no filter hack */
 .nav-cta, .btn--primary {
   background: var(--bold-accent) !important;
   color: var(--bold-bg) !important;
@@ -298,9 +297,10 @@ details[open] .faq-q::after { content: "−"; }
 
 /* ───── LIGHT-THEME OVERRIDE (toggled via html[data-theme="light"] by app.js) ───── */
 :root[data-theme="light"] {
-  --bold-bg: #ffffff;
-  --bold-bg-2: #f6f8fc;
-  --bold-bg-3: #eef2f9;
+  /* softer off-white palette — less harsh than pure #fff */
+  --bold-bg: #EBEEF3;
+  --bold-bg-2: #E2E6ED;
+  --bold-bg-3: #D8DDE6;
   --bold-text: #0A0E16;
   --bold-text-dim: rgba(10,14,22,0.7);
   --bold-text-mute: rgba(10,14,22,0.5);
@@ -316,6 +316,7 @@ details[open] .faq-q::after { content: "−"; }
 :root[data-theme="light"] .theme-toggle { color: var(--bold-text) !important; }
 :root[data-theme="light"] .hero-heading { color: var(--bold-text) !important; }
 :root[data-theme="light"] .hero-heading .word { color: var(--bold-text) !important; }
+:root[data-theme="light"] .hero-heading .word.word--accent { color: var(--bold-accent) !important; }
 :root[data-theme="light"] .section-heading { color: var(--bold-text) !important; }
 :root[data-theme="light"] .svc-row-title,
 :root[data-theme="light"] .step-title,

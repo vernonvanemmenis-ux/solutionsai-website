@@ -423,9 +423,33 @@
     setPhase('idle');
   }
 
+  // ───────── LOGO SWAP ON THEME CHANGE ─────────
+  // Swap the nav + footer logo to a light-bg variant when the user flips to
+  // light mode (the dark-bg logo has white text and goes invisible on white).
+  function initLogoSwap() {
+    const LOGO_DARK = 'assets/logo-dark-bg.png';   // blue icon + white text (for dark bg)
+    const LOGO_LIGHT = 'assets/logo-primary.png';  // blue icon + dark text (for light bg)
+    const targets = document.querySelectorAll('.nav-logo-img, .footer-logo-img');
+    if (!targets.length) return;
+    const apply = () => {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const src = light ? LOGO_LIGHT : LOGO_DARK;
+      targets.forEach((img) => {
+        if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+      });
+    };
+    apply();
+    const obs = new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.attributeName === 'data-theme') { apply(); break; }
+      }
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { initGlobe(); initSearchPill(); });
+    document.addEventListener('DOMContentLoaded', () => { initGlobe(); initSearchPill(); initLogoSwap(); });
   } else {
-    initGlobe(); initSearchPill();
+    initGlobe(); initSearchPill(); initLogoSwap();
   }
 })();
