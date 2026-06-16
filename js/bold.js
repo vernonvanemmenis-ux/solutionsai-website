@@ -124,6 +124,9 @@
     let last = performance.now();
     const SPOT = () => R * 0.07;
 
+    // theme detection — reads <html data-theme> each frame so the toggle is live
+    const isLight = () => document.documentElement.getAttribute('data-theme') === 'light';
+
     const draw = (now) => {
       const dt = now - last; last = now;
       if (!dragging) { rotY += 0.00015 * dt + vel; vel *= 0.95; }
@@ -132,21 +135,34 @@
       if (glow) glow.style.opacity = (1 + hover * 0.9).toFixed(2);
 
       ctx.clearRect(0, 0, W, H);
+      const L = isLight();
       const spot = SPOT(), spot2 = spot * spot;
       const lift = 0.74 + 0.30 * hover;
 
+      // sphere body radial gradient (theme-tuned)
       const grd = ctx.createRadialGradient(cx - R*0.3, cy - R*0.35, R*0.1, cx, cy, R);
-      grd.addColorStop(0, 'rgba(30,60,120,' + (0.22 + 0.12*hover).toFixed(3) + ')');
-      grd.addColorStop(0.7, 'rgba(12,24,52,0.18)');
-      grd.addColorStop(1, 'rgba(8,14,28,0)');
+      if (L) {
+        grd.addColorStop(0, 'rgba(120,170,240,' + (0.32 + 0.16*hover).toFixed(3) + ')');
+        grd.addColorStop(0.7, 'rgba(80,130,210,0.16)');
+        grd.addColorStop(1, 'rgba(50,100,180,0.04)');
+      } else {
+        grd.addColorStop(0, 'rgba(30,60,120,' + (0.22 + 0.12*hover).toFixed(3) + ')');
+        grd.addColorStop(0.7, 'rgba(12,24,52,0.18)');
+        grd.addColorStop(1, 'rgba(8,14,28,0)');
+      }
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2*PI); ctx.fillStyle = grd; ctx.fill();
 
+      // lat/lon graticule
       ctx.lineWidth = 1;
       const poly = (pts) => {
         for (let i = 0; i < pts.length - 1; i++) {
           const a = pts[i], b = pts[i+1];
           if (a.z > 0 && b.z > 0) {
-            ctx.strokeStyle = 'rgba(61,139,255,' + ((0.04 + 0.06 * ((a.z + b.z) / 2)) * lift).toFixed(3) + ')';
+            const baseA = (0.04 + 0.06 * ((a.z + b.z) / 2)) * lift;
+            // ~3x stronger in light mode so the grid is actually visible
+            ctx.strokeStyle = L
+              ? 'rgba(37,99,176,' + (baseA * 3.0).toFixed(3) + ')'
+              : 'rgba(61,139,255,' + baseA.toFixed(3) + ')';
             ctx.beginPath(); ctx.moveTo(cx + a.x*R, cy - a.y*R); ctx.lineTo(cx + b.x*R, cy - b.y*R); ctx.stroke();
           }
         }
@@ -154,6 +170,7 @@
       for (let lat = -60; lat <= 60; lat += 30) { const pts = []; for (let lo = -180; lo <= 180; lo += 9) pts.push(rot(llv(lat, lo))); poly(pts); }
       for (let lo = -180; lo < 180; lo += 30) { const pts = []; for (let la = -85; la <= 85; la += 9) pts.push(rot(llv(la, lo))); poly(pts); }
 
+      // continents (dotted land) — dark dots in light mode, light dots in dark mode
       for (let i = 0; i < land.length; i++) {
         const p = rot(land[i]);
         if (p.z > 0.04) {
@@ -165,16 +182,31 @@
             if (d2 < spot2) { bright = Math.pow(1 - Math.sqrt(d2) / spot, 0.7); a += bright * 2.2; }
           }
           if (a > 1) a = 1;
-          ctx.fillStyle = 'rgba(' + Math.round(150 + bright*105) + ',' + Math.round(200 + bright*55) + ',255,' + a.toFixed(3) + ')';
+          if (L) {
+            // darker land dots with hover spotlight pushing toward bright accent blue
+            const ra = Math.max(0, 30 - bright*15);
+            const ga = Math.max(0, 60 - bright*10);
+            const ba = Math.min(255, 130 + bright*120);
+            ctx.fillStyle = 'rgba(' + Math.round(ra) + ',' + Math.round(ga) + ',' + Math.round(ba) + ',' + Math.min(1, a*1.6).toFixed(3) + ')';
+            if (bright > 0.15) { ctx.shadowColor = 'rgba(61,139,255,' + (0.7*bright).toFixed(3) + ')'; ctx.shadowBlur = 6 * bright; }
+          } else {
+            ctx.fillStyle = 'rgba(' + Math.round(150 + bright*105) + ',' + Math.round(200 + bright*55) + ',255,' + a.toFixed(3) + ')';
+            if (bright > 0.15) { ctx.shadowColor = 'rgba(150,200,255,' + (0.8*bright).toFixed(3) + ')'; ctx.shadowBlur = 6 * bright; }
+          }
           const s = dotS * (1 + bright * 1.8);
-          if (bright > 0.15) { ctx.shadowColor = 'rgba(150,200,255,' + (0.8*bright).toFixed(3) + ')'; ctx.shadowBlur = 6 * bright; }
           ctx.fillRect(x - s/2, y - s/2, s, s);
           ctx.shadowBlur = 0;
         }
       }
 
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2*PI); ctx.strokeStyle = 'rgba(61,139,255,' + (0.22 + 0.25*hover).toFixed(3) + ')'; ctx.lineWidth = 1; ctx.stroke();
+      // rim
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2*PI);
+      ctx.strokeStyle = L
+        ? 'rgba(37,99,176,' + (0.42 + 0.30*hover).toFixed(3) + ')'
+        : 'rgba(61,139,255,' + (0.22 + 0.25*hover).toFixed(3) + ')';
+      ctx.lineWidth = 1; ctx.stroke();
 
+      // travelling connection streaks
       spawnT -= dt;
       if (streaks.length < MAX_STREAKS && spawnT <= 0) { streaks.push(mkStreak()); spawnT = 320 + Math.random() * 680; }
       for (let si = streaks.length - 1; si >= 0; si--) {
@@ -188,7 +220,10 @@
           if (p.z > 0 && q.z > 0) {
             const fade = Math.max(0, Math.min(1, ((i / seg) - h0) / st.tail));
             const a = fade * 0.9 * lift * (0.5 + 0.5 * ((p.z + q.z) / 2));
-            ctx.strokeStyle = 'rgba(130,185,255,' + a.toFixed(3) + ')'; ctx.lineWidth = 1.6;
+            ctx.strokeStyle = L
+              ? 'rgba(37,99,176,' + Math.min(1, a*1.4).toFixed(3) + ')'
+              : 'rgba(130,185,255,' + a.toFixed(3) + ')';
+            ctx.lineWidth = 1.6;
             ctx.beginPath(); ctx.moveTo(cx + p.x*R, cy - p.y*R); ctx.lineTo(cx + q.x*R, cy - q.y*R); ctx.stroke();
           }
         }
@@ -197,24 +232,40 @@
           if (hp.z > 0) {
             const x = cx + hp.x*R, y = cy - hp.y*R;
             ctx.beginPath(); ctx.arc(x, y, 2.1, 0, 2*PI);
-            ctx.fillStyle = 'rgba(225,238,255,' + (0.85 * lift).toFixed(3) + ')';
-            ctx.shadowColor = 'rgba(130,185,255,0.95)'; ctx.shadowBlur = 9; ctx.fill(); ctx.shadowBlur = 0;
+            ctx.fillStyle = L
+              ? 'rgba(11,17,32,' + (0.85 * lift).toFixed(3) + ')'
+              : 'rgba(225,238,255,' + (0.85 * lift).toFixed(3) + ')';
+            ctx.shadowColor = L ? 'rgba(37,99,176,0.95)' : 'rgba(130,185,255,0.95)';
+            ctx.shadowBlur = 9; ctx.fill(); ctx.shadowBlur = 0;
           }
         }
       }
 
+      // city markers
       cv2.forEach((v, i) => {
         const p = rot(v);
         if (p.z > 0) {
           const x = cx + p.x*R, y = cy - p.y*R, a = (0.35 + 0.6*p.z) * lift;
           ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 2*PI);
-          ctx.fillStyle = 'rgba(255,243,224,' + Math.min(1, a).toFixed(3) + ')';
-          ctx.shadowColor = 'rgba(255,226,176,0.85)'; ctx.shadowBlur = 11; ctx.fill(); ctx.shadowBlur = 0;
+          if (L) {
+            // warm orange dot for visibility against light bg
+            ctx.fillStyle = 'rgba(217,119,6,' + Math.min(1, a*1.2).toFixed(3) + ')';
+            ctx.shadowColor = 'rgba(245,158,11,0.85)';
+          } else {
+            ctx.fillStyle = 'rgba(255,243,224,' + Math.min(1, a).toFixed(3) + ')';
+            ctx.shadowColor = 'rgba(255,226,176,0.85)';
+          }
+          ctx.shadowBlur = 11; ctx.fill(); ctx.shadowBlur = 0;
           ctx.beginPath(); ctx.arc(x, y, 5 + 1.5*Math.sin(now*0.004 + i), 0, 2*PI);
-          ctx.strokeStyle = 'rgba(61,139,255,' + (0.32*a).toFixed(3) + ')'; ctx.lineWidth = 1; ctx.stroke();
+          ctx.strokeStyle = L
+            ? 'rgba(37,99,176,' + (0.45*a).toFixed(3) + ')'
+            : 'rgba(61,139,255,' + (0.32*a).toFixed(3) + ')';
+          ctx.lineWidth = 1; ctx.stroke();
           if (p.z > 0.5 && hover > 0.25) {
             ctx.font = '600 9px "JetBrains Mono", monospace';
-            ctx.fillStyle = 'rgba(255,243,224,' + Math.min(1, (hover - 0.2) * a * 1.3).toFixed(3) + ')';
+            ctx.fillStyle = L
+              ? 'rgba(11,17,32,' + Math.min(1, (hover - 0.2) * a * 1.3).toFixed(3) + ')'
+              : 'rgba(255,243,224,' + Math.min(1, (hover - 0.2) * a * 1.3).toFixed(3) + ')';
             ctx.fillText(cities[i].n, x + 8, y + 3);
           }
         }

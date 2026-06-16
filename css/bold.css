@@ -43,11 +43,34 @@ html, body { background: var(--bold-bg) !important; color: var(--bold-text); ove
 /* hide the existing scroll-background canvas — it's a glow effect that fights the flat dark palette */
 .scroll-bg, .scroll-bg__canvas, .scroll-bg__tint, .scroll-bg__dimmer { display: none !important; }
 
-/* ───── NAV ───── */
-.site-nav { background: transparent !important; backdrop-filter: none !important; box-shadow: none !important; border: none !important; mix-blend-mode: difference; }
+/* ───── NAV (frosted-glass; readable over ANY section) ───── */
+.site-nav {
+  background: rgba(10,14,22,0.65) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25) !important;
+  mix-blend-mode: normal !important;
+}
+.site-nav.scrolled {
+  background: rgba(10,14,22,0.82) !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
 .nav-inner { padding: 8px 0; }
 .nav-link { font-family: var(--font-mono) !important; font-size: 13px !important; color: #fff !important; text-transform: lowercase; letter-spacing: 0.02em; }
 .nav-link:hover { color: var(--bold-accent) !important; }
+:root[data-theme="light"] .site-nav {
+  background: rgba(255,255,255,0.72) !important;
+  border-bottom-color: rgba(10,14,22,0.08) !important;
+  box-shadow: 0 8px 30px rgba(10,14,22,0.06) !important;
+}
+:root[data-theme="light"] .site-nav.scrolled {
+  background: rgba(255,255,255,0.88) !important;
+  border-bottom-color: rgba(10,14,22,0.12) !important;
+}
+:root[data-theme="light"] .nav-link { color: var(--bold-text) !important; }
+.nav-logo-img { filter: var(--nav-logo-filter, none); }
+:root[data-theme="light"] { --nav-logo-filter: invert(1) hue-rotate(180deg) brightness(1.1); }
 .nav-cta, .btn--primary {
   background: var(--bold-accent) !important;
   color: var(--bold-bg) !important;
@@ -113,34 +136,50 @@ html, body { background: var(--bold-bg) !important; color: var(--bold-text); ove
   letter-spacing: -0.02em !important;
 }
 
-/* ───── TRUST + STROKE-TEXT MARQUEE ───── */
+/* ───── TRUST + TECH MARQUEE (logo + name) ───── */
 .trust, .trust-inner { background: var(--bold-bg) !important; }
 .trust { border-top: 1px solid var(--bold-border); border-bottom: 1px solid var(--bold-border); }
 .tech-marquee { padding: 26px 0; background: transparent !important; }
-.tech-track { gap: 0 !important; }
+.tech-track { gap: 0 !important; align-items: center !important; }
 .tech-pill {
   font-family: 'Montserrat', sans-serif !important;
-  font-weight: 800 !important;
-  font-size: clamp(1.2rem, 2.55vw, 2.1rem) !important;
-  letter-spacing: -0.02em !important;
-  text-transform: uppercase !important;
-  color: transparent !important;
-  -webkit-text-stroke: 1px rgba(255,255,255,0.55);
+  font-weight: 700 !important;
+  font-size: clamp(0.95rem, 1.5vw, 1.25rem) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--bold-text) !important;
+  -webkit-text-stroke: 0 !important;
   background: transparent !important;
   border: none !important;
   padding: 0 28px !important;
   margin: 0 !important;
   border-radius: 0 !important;
   position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  white-space: nowrap;
 }
 .tech-pill + .tech-pill::before {
   content: "✦";
   position: absolute;
-  left: -8px;
+  left: -6px;
   color: var(--bold-accent);
-  -webkit-text-stroke: 0;
   font-size: 0.7em;
+  top: 50%;
+  transform: translateY(-50%);
 }
+.tech-pill-icon {
+  width: clamp(20px, 2.2vw, 28px);
+  height: clamp(20px, 2.2vw, 28px);
+  object-fit: contain;
+  display: inline-block;
+  flex: 0 0 auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+:root[data-theme="light"] .tech-pill-icon { filter: brightness(0); opacity: 0.85; }
+.tech-pill-name { line-height: 1; }
 
 /* ───── BIG-NUMBER STATS ───── */
 .stats-row { gap: 30px; }
