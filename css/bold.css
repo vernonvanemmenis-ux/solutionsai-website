@@ -82,7 +82,12 @@ html, body { background: var(--bold-bg) !important; color: var(--bold-text); ove
 .theme-toggle { color: #fff !important; mix-blend-mode: normal; }
 
 /* ───── HERO ───── */
-.hero { background: var(--bold-bg) !important; min-height: 100vh; }
+.hero {
+  background: var(--bold-bg) !important;
+  min-height: 100vh;
+  /* push content below the fixed nav so the hero label isn't clipped */
+  padding-top: clamp(110px, 14vh, 150px) !important;
+}
 #hero-canvas { opacity: 0.4 !important; }
 .hero-label {
   font-family: var(--font-mono) !important;
@@ -263,6 +268,18 @@ details[open] .faq-q::after { content: "−"; }
   border: 1px solid var(--bold-border) !important;
   color: #fff !important;
   border-radius: 8px !important;
+}
+/* native <option> elements use OS styling by default and ignore the parent's
+   color/bg — set them explicitly so the dropdown is readable in dark mode */
+.form-field option,
+select.form-field option {
+  background: var(--bold-bg) !important;
+  color: var(--bold-text) !important;
+}
+:root[data-theme="light"] .form-field option,
+:root[data-theme="light"] select.form-field option {
+  background: #ffffff !important;
+  color: var(--bold-text) !important;
 }
 .form-field:focus, .form-textarea:focus { border-color: var(--bold-accent) !important; outline: none; }
 .form-field::placeholder, .form-textarea::placeholder { color: var(--bold-text-mute) !important; }
